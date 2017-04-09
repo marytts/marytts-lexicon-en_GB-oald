@@ -35,3 +35,14 @@ task copyOald(type: Copy) {
     from configurations.oald
     into "$buildDir/oald-packed"
 }
+
+task unpackOald(type: Copy) {
+    dependsOn copyOald
+    from tarTree(file("$copyOald.destinationDir/festlex_OALD-0.4.tar.gz"))
+    into "$buildDir/oald"
+    include '**/oald-0.4.out', '**/oald_extensions.scm', '**/COPYING'
+    eachFile {
+        it.path = it.name
+    }
+    includeEmptyDirs = false
+}
