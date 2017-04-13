@@ -78,3 +78,9 @@ task processOald {
         }
     }
 }
+
+compileLexicon {
+    dependsOn processOald
+    allophonesFile = file('modules/en/gb/lexicon/allophones.en_GB.xml')
+    lexiconFile = processOald.destFile
+}
