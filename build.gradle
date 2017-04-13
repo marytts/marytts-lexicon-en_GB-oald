@@ -84,3 +84,9 @@ compileLexicon {
     allophonesFile = file('modules/en/gb/lexicon/allophones.en_GB.xml')
     lexiconFile = processOald.destFile
 }
+
+processResources {
+    from unpackOald, {
+        include 'COPYING'
+    }
+}
