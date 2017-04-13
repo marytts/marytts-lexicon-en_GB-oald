@@ -63,6 +63,8 @@ task processOald {
                 scmFile.eachLine('UTF-8') { line ->
                     (line =~ /\( "(\w+)" +(\w+) \( ?([0-2a-z@ ]+?) ?\) .*\)/).each { match, lemma, pos, transcription ->
                         lemma = lemma.replaceAll('_e', 'é').replaceAll('`a', 'à')
+                        // TODO: syllabification fails with "@@", remap to something else
+                        transcription = transcription.replaceAll('@@', 'Q')
                         def transcriptionMapped = transcription.replaceAll(~/\b(\S+?)([0-2])?\b/, { all, phone, stress ->
                             def mappedStress = stressMapping[stress] ?: ''
                             mappedStress + phone

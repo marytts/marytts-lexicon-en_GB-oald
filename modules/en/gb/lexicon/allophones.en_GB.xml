@@ -6,6 +6,8 @@
     <vowel ph="oo" vlng="l" vheight="3" vfront="3" vrnd="+"/>
     <vowel ph="uu" vlng="l" vheight="1" vfront="3" vrnd="+"/>
     <vowel ph="ii" vlng="l" vheight="1" vfront="1" vrnd="-"/>
+    <!-- TODO: syllabification fails with "@@", remap to something else -->
+    <vowel ph="Q" vlng="l" vheight="2" vfront="2" vrnd="-"/>
 
     <vowel ph="a" vlng="s" vheight="3" vfront="1" vrnd="-"/>
     <vowel ph="uh" vlng="s" vheight="2" vfront="2" vrnd="-"/>
