@@ -40,9 +40,39 @@ task unpackOald(type: Copy) {
     dependsOn copyOald
     from tarTree(file("$copyOald.destinationDir/festlex_OALD-0.4.tar.gz"))
     into "$buildDir/oald"
-    include '**/oald-0.4.out', '**/oald_extensions.scm', '**/COPYING'
+    include '**/cuvoald710-0.2.scm', '**/oald_extensions.scm', '**/COPYING'
     eachFile {
         it.path = it.name
     }
     includeEmptyDirs = false
+}
+
+task processOald {
+    dependsOn unpackOald
+    ext.destFile = file("$unpackOald.destinationDir/oald.txt")
+    outputs.file destFile
+    doLast {
+        def stressMapping = [
+                '1': "'",
+                '2': ','
+        ]
+        def allophoneSetFile = file('modules/en/gb/lexicon/allophones.en_GB.xml')
+        def allophoneSet = marytts.modules.phonemiser.AllophoneSet.getAllophoneSet(allophoneSetFile.newInputStream(), 'oald')
+        destFile.withWriter { dest ->
+            fileTree(unpackOald.destinationDir).include('*.scm').each { scmFile ->
+                scmFile.eachLine('UTF-8') { line ->
+                    (line =~ /\( "(\w+)" +(\w+) \( ?([0-2a-z@ ]+?) ?\) .*\)/).each { match, lemma, pos, transcription ->
+                        lemma = lemma.replaceAll('_e', 'é').replaceAll('`a', 'à')
+                        def transcriptionMapped = transcription.replaceAll(~/\b(\S+?)([0-2])?\b/, { all, phone, stress ->
+                            def mappedStress = stressMapping[stress] ?: ''
+                            mappedStress + phone
+                        })
+                        def transcriptionSyllabified = allophoneSet.syllabify(transcriptionMapped)
+                        def transcriptionNoSpaces = transcriptionSyllabified.replaceAll(' ', '')
+                        dest.println "$lemma $transcriptionNoSpaces"
+                    }
+                }
+            }
+        }
+    }
 }
