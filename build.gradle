@@ -57,7 +57,7 @@ task processOald {
                 '1': "'",
                 '2': ','
         ]
-        def allophoneSetFile = file('modules/en/gb/lexicon/allophones.en_GB.xml')
+        def allophoneSetFile = file('modules/en/gb/oald/allophones.en_GB.xml')
         def allophoneSet = marytts.modules.phonemiser.AllophoneSet.getAllophoneSet(allophoneSetFile.newInputStream(), 'oald')
         destFile.withWriter { dest ->
             fileTree(unpackOald.destinationDir).include('*.scm').each { scmFile ->
@@ -82,13 +82,16 @@ task processOald {
 
 compileLexicon {
     dependsOn processOald
-    allophonesFile = file('modules/en/gb/lexicon/allophones.en_GB.xml')
+    allophonesFile = file('modules/en/gb/oald/allophones.en_GB.xml')
     lexiconFile = processOald.destFile
 }
 
 processResources {
     from unpackOald, {
         include 'COPYING'
+    }
+    eachFile {
+        it.path = "marytts/language/$project.locale/oald/$it.name"
     }
 }
 
